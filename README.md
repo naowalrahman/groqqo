@@ -9,4 +9,4 @@ pip install flask groq dotenv
 python app.py
 ```
 
-**Note:** If you get an error from the groq client, try running on python 3.12.
+**Note:** If you get an error from the Groq client, try running on python 3.12.
