@@ -8,3 +8,5 @@ To run:
 pip install flask groq dotenv
 python app.py
 ```
+
+**Note:** If you get an error from the groq client, try running on python 3.12.
