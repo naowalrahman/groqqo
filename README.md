@@ -1,12 +1,3 @@
 # groqqo
 
-A clean, aesthetically pleasing web interface for the Groq API.
-
-To run:
-
-```bash
-pip install flask groq dotenv
-python app.py
-```
-
-**Note:** If you get an error from the Groq client, try running on python 3.12.
+A clean, aesthetically pleasing web interface for the Groq API. Check it out [here](https://naowalrahman.rocks/groqqo)!
