@@ -17,7 +17,8 @@
             }
         };
     </script>
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='index.css') }}">
+    <link rel="stylesheet" type="text/css" href="index.css">
+    <script src="groqClient.js"></script>
 </head>
 
 <body>
@@ -26,25 +27,24 @@
             <div class="header">
                 <h2 id="title" class="is-4">Groqqo</h2>
                 <div class="control is-hidden-touch">
-                    <label for="model-select" class="label model-select-label">Model:</label>
                     <div class="dropdown">
-                        <button class="dropdown-button" id="model-select-button" data-value="llama3-70b-8192">Llama 3 70B 8192</button>
+                        <button class="dropdown-button" id="model-select-button" data-value="llama-3.3-70b-versatile">Llama 3.3 70B Versatile</button>
                         <div class="dropdown-content" id="model-select">
-                            <div class="dropdown-item" data-value="llama3-70b-8192">Llama 3 70B 8192</div>
-                            <div class="dropdown-item" data-value="llama-3.3-70b-versatile">Llama 3.3 70B Versatile</div>
-                            <div class="dropdown-item" data-value="llama-3.1-8b-instant">Llama 3.1 8B Instant</div>
-                            <div class="dropdown-item" data-value="llama-guard-3-8b">Llama Guard 3 8B</div>
                             <div class="dropdown-item" data-value="gemma2-9b-it">Gemma 2 9B IT</div>
-                            <div class="dropdown-item" data-value="llama3-8b-8192">Llama 3 8B 8192</div>
-                            <div class="dropdown-item" data-value="mixtral-8x7b-32768">Mixtral 8x7B 32768</div>
-                            <div class="dropdown-item" data-value="llama-3.3-70b-specdec">Llama 3.3 70B SpecDec</div>
-                            <div class="dropdown-item" data-value="llama-3.1-70b-specdec">Llama 3.1 70B SpecDec</div>
+                            <div class="dropdown-item" data-value="llama-3.1-8b-instant">Llama 3.1 8B Instant</div>
                             <div class="dropdown-item" data-value="llama-3.2-1b-preview">Llama 3.2 1B Preview</div>
                             <div class="dropdown-item" data-value="llama-3.2-3b-preview">Llama 3.2 3B Preview</div>
+                            <div class="dropdown-item" data-value="llama-3.3-70b-specdec">Llama 3.3 70B SpecDec</div>
+                            <div class="dropdown-item" data-value="llama-3.3-70b-versatile">Llama 3.3 70B Versatile</div>
+                            <div class="dropdown-item" data-value="llama3-8b-8192">Llama 3 8B 8192</div>
+                            <div class="dropdown-item" data-value="llama3-70b-8192">Llama 3 70B 8192</div>
+                            <div class="dropdown-item" data-value="llama-guard-3-8b">Llama Guard 3 8B</div>
+                            <div class="dropdown-item" data-value="mixtral-8x7b-32768">Mixtral 8x7B 32768</div>
                         </div>
                     </div>
                 </div>
                 <button class="button is-info is-hidden-touch theme-toggle">Toggle Theme</button>
+                <button class="button is-info is-hidden-touch api-key" onclick="window.location.href='apikey.html'">Manage API Key</button>
                 <button class="menu__toggler">
                     <span></span>
                 </button>
@@ -67,28 +67,27 @@
     <div class="menu">
         <div class="side-menu-content">
             <div class="control">
-                <label id="model-select-side-label" for="model-select-side" class="label model-select-label">Model:</label>
                 <div class="dropdown">
-                    <button class="dropdown-button" id="model-select-side-button" data-value="llama3-70b-8192">Llama 3 70B 8192</button>
+                    <button class="dropdown-button" id="model-select-side-button" data-value="llama-3.3-70b-versatile">Llama 3.3 70B Versatile</button>
                     <div class="dropdown-content" id="model-select-side">
-                        <div class="dropdown-item" data-value="llama3-70b-8192">Llama 3 70B 8192</div>
-                        <div class="dropdown-item" data-value="llama-3.3-70b-versatile">Llama 3.3 70B Versatile</div>
-                        <div class="dropdown-item" data-value="llama-3.1-8b-instant">Llama 3.1 8B Instant</div>
-                        <div class="dropdown-item" data-value="llama-guard-3-8b">Llama Guard 3 8B</div>
                         <div class="dropdown-item" data-value="gemma2-9b-it">Gemma 2 9B IT</div>
-                        <div class="dropdown-item" data-value="llama3-8b-8192">Llama 3 8B 8192</div>
-                        <div class="dropdown-item" data-value="mixtral-8x7b-32768">Mixtral 8x7B 32768</div>
-                        <div class="dropdown-item" data-value="llama-3.3-70b-specdec">Llama 3.3 70B SpecDec</div>
-                        <div class="dropdown-item" data-value="llama-3.1-70b-specdec">Llama 3.1 70B SpecDec</div>
+                        <div class="dropdown-item" data-value="llama-3.1-8b-instant">Llama 3.1 8B Instant</div>
                         <div class="dropdown-item" data-value="llama-3.2-1b-preview">Llama 3.2 1B Preview</div>
                         <div class="dropdown-item" data-value="llama-3.2-3b-preview">Llama 3.2 3B Preview</div>
+                        <div class="dropdown-item" data-value="llama-3.3-70b-specdec">Llama 3.3 70B SpecDec</div>
+                        <div class="dropdown-item" data-value="llama-3.3-70b-versatile">Llama 3.3 70B Versatile</div>
+                        <div class="dropdown-item" data-value="llama3-8b-8192">Llama 3 8B 8192</div>
+                        <div class="dropdown-item" data-value="llama3-70b-8192">Llama 3 70B 8192</div>
+                        <div class="dropdown-item" data-value="llama-guard-3-8b">Llama Guard 3 8B</div>
+                        <div class="dropdown-item" data-value="mixtral-8x7b-32768">Mixtral 8x7B 32768</div>
                     </div>
                 </div>
             </div>
             <button class="button is-info theme-toggle">Toggle Theme</button>
+            <button class="button is-info api-key" onclick="window.location.href='apikey.html'">Manage API Key</button>
         </div>
     </div>
-    <script src="{{ url_for('static',filename='index.js') }}"></script>
+    <script src="index.js"></script>
 </body>
 
 </html>

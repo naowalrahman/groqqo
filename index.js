@@ -1,13 +1,11 @@
-const LARGE_SCREEN_WIDTH = 768;
+const LARGE_SCREEN_WIDTH = 1024;
 
-const savedTheme = localStorage.getItem('theme') || (prefersDarkScheme.matches ? 'dark' : 'light');
-setTheme(savedTheme);
 
 var converter = new showdown.Converter();
 converter.setFlavor('github');
 
 function scrollToBottom() {
-    return;
+    // return;
     const responseText = document.getElementById('response-text');
     if (responseText.lastElementChild) {
         responseText.lastElementChild.scrollIntoView({ behavior: 'smooth' });
@@ -16,14 +14,7 @@ function scrollToBottom() {
 
 // communicate with API with buttons and on page load
 (async () => {
-    const history = await fetch('/history', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        }
-    });
-    const result = await history.json();
-    updateChatHistory(result.history);
+    updateChatHistory(chatHistory);
     scrollToBottom();
 })();
 
@@ -34,19 +25,11 @@ document.getElementById('submit').addEventListener('click', async () => {
 
     const responseContainer = document.getElementById('response-text');
 
-    const response = await fetch('/ask', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ question, model })
-    });
-
-    const result = await response.json();
-    if (result.error) {
-        responseContainer.innerHTML += `<div class="message has-text-danger">${result.error}</div>`;
-    } else {
-        updateChatHistory(result.history);
+    try {
+        const result = await askGroq(question, model);
+        updateChatHistory(chatHistory);
+    } catch (error) {
+        responseContainer.innerHTML += `<div class="message has-text-danger">${error.message}</div>`;
     }
 
     document.getElementById('question').value = '';
@@ -56,13 +39,7 @@ document.getElementById('submit').addEventListener('click', async () => {
 document.getElementById('clear').addEventListener('click', async () => {
     const responseContainer = document.getElementById('response-text');
 
-    await fetch('/clear', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        }
-    });
-
+    clearHistory();
     responseContainer.innerHTML = '';
 });
 
@@ -150,6 +127,9 @@ for (var button of themeToggleButtons) {
         localStorage.setItem('theme', newTheme);
     });
 }
+
+const savedTheme = localStorage.getItem('theme') || (prefersDarkScheme.matches ? 'dark' : 'light');
+setTheme(savedTheme);
 
 // Custom dropdown functionality
 function setupDropdown(dropdownButtonId, dropdownContentId) {

@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage API Keys</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.9.3/css/bulma.min.css">
+    <link rel="stylesheet" type="text/css" href="index.css">
+    <style>
+        .container {
+            padding: 20px;
+        }
+
+        .field {
+            margin-bottom: 20px;
+        }
+
+        .buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        @media (min-width: 768px) {
+            .buttons {
+                flex-direction: row;
+                justify-content: flex-start;
+            }
+
+            .buttons .button {
+                width: auto;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h2 class="title">Manage API Keys</h2>
+        <div class="field">
+            <label class="label">Enter your API Key:</label>
+            <div class="control">
+                <input id="api-key-input" class="input" type="text" placeholder="API Key">
+            </div>
+        </div>
+        <div class="buttons">
+            <button id="save-api-key" class="button is-primary">Save API Key</button>
+        </div>
+        <div class="field">
+            <label class="label">Select API Key:</label>
+            <div class="control">
+                <div class="select is-fullwidth">
+                    <select id="api-key-select">
+                        <!-- Options will be populated dynamically -->
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="buttons">
+            <button id="delete-api-key" class="button is-danger">Delete Selected API Key</button>
+        </div>
+        <div id="message" class="notification is-hidden"></div>
+    </div>
+    <script src="apikey.js"></script>
+</body>
+
+</html>
