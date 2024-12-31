@@ -289,9 +289,9 @@ code {
     left: -90%;
     z-index: 998;
     color: var(--text-color);
-    background: rgba(0, 0, 0, 0.7); 
+    background: rgba(0, 0, 0, 0.75); 
     clip-path: polygon(0 0, 100% 0, 85% 100%, 0% 100%);
-    width: 90%;
+    width: 80%;
     height: 100%;
     padding: 20px;
     display: flex;
@@ -306,7 +306,7 @@ code {
 
 .menu.active {
     left: 0;
-    background: rgba(0, 0, 0, 0.9);
+    background: rgba(0, 0, 0, 0.75);
 }
 
 /* custom dropdown */
