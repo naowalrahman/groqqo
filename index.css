@@ -41,7 +41,7 @@ body {
     color: var(--text-color);
 }
 
-strong {
+h1, h2, h3, h4, h5, h6, strong {
     color: var(--text-color) !important;
 }
 
@@ -58,8 +58,8 @@ strong {
     margin-bottom: 20px;
     width: 90vw;
     max-width: 1000px;
-    padding-top: 90px;
-    padding-bottom: 200px;
+    padding-top: 70px;
+    padding-bottom: 130px;
     overflow-y: auto;
     background-color: var(--background-color);
 }
@@ -134,12 +134,12 @@ small {
     color: var(--text-color);
 }
 
-textarea.textarea::placeholder {
+#question::placeholder {
     color: var(--text-color);
     opacity: 0.3;
 }
 
-textarea.textarea {
+#question {
     border-radius: 10px;
     border: 1px solid var(--text-color);
     padding: 15px;
@@ -149,12 +149,13 @@ textarea.textarea {
     overflow: hidden;
 }
 
-textarea.textarea:focus {
+#question:focus {
     border-color: #3273dc;
     box-shadow: 0 0 8px rgba(50, 115, 220, 0.5);
     outline: none;
 }
 
+/* Markdown styling */
 pre {
     background-color: var(--code-bg);
     position: relative;
@@ -211,6 +212,7 @@ code {
     padding: 10px 0px;
 }
 
+/* 'Groqqo' logo/header */
 #title {
     font-family: 'Montserrat', sans-serif;
     font-weight: normal;
@@ -226,7 +228,7 @@ code {
     margin-left: 10px;
 }
 
-/* MENU BUTTON */
+/* menu button on mobile */
 .menu__toggler {
     position: absolute;
     top: 24px;
@@ -281,7 +283,7 @@ code {
     transform: rotate(225deg);
 }
 
-/* SLIDING MENU PANEL */
+/* sliding menu panel on mobile */
 .menu {
     position: absolute;
     left: -90%;
@@ -295,7 +297,7 @@ code {
     display: flex;
     flex-direction: column;
     justify-content: center;
-    transition: 300ms left cubic-bezier(0.77, 0, 0.175, 1), 300ms background-color cubic-bezier(0.77, 0, 0.175, 1); /* Add transition for background color */
+    transition: 300ms left cubic-bezier(0.77, 0, 0.175, 1), 300ms background-color cubic-bezier(0.77, 0, 0.175, 1);
 }
 
 .menu * {
@@ -307,7 +309,7 @@ code {
     background: rgba(0, 0, 0, 0.9);
 }
 
-/* Custom Dropdown */
+/* custom dropdown */
 .dropdown {
     position: relative;
     display: inline-block;
@@ -323,7 +325,7 @@ code {
     border-radius: 5px;
     cursor: pointer;
     text-align: center;
-    width: 200%;
+    width: 150%;
 }
 
 .dropdown-content {
@@ -332,7 +334,7 @@ code {
     background-color: var(--background-color);
     box-shadow: 0 8px 16px var(--dropdown-shadow);
     z-index: 1000;
-    width: 200%;
+    width: 150%;
     border-radius: 5px;
     overflow: hidden;
     max-height: 0;

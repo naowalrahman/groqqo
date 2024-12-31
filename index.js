@@ -12,13 +12,23 @@ function scrollToBottom() {
     }
 }
 
-// communicate with API with buttons and on page load
+// communicate with API with buttons, <ctrl-enter>, and on page load
 (async () => {
     updateChatHistory(chatHistory);
     scrollToBottom();
 })();
 
 document.getElementById('submit').addEventListener('click', async () => {
+    await submitQuestion();
+});
+
+document.getElementById('question').addEventListener('keydown', async (event) => {
+    if (event.ctrlKey && event.key === 'Enter') {
+        await submitQuestion();
+    }
+});
+
+async function submitQuestion() {
     const question = document.getElementById('question').value;
     const model = window.innerWidth > LARGE_SCREEN_WIDTH ? document.getElementById('model-select-button').dataset.value : document.getElementById('model-select-side-button').dataset.value;
     if (!question) return;
@@ -34,7 +44,7 @@ document.getElementById('submit').addEventListener('click', async () => {
 
     document.getElementById('question').value = '';
     scrollToBottom();
-});
+}
 
 document.getElementById('clear').addEventListener('click', async () => {
     const responseContainer = document.getElementById('response-text');

@@ -3,6 +3,9 @@ document.getElementById('save-api-key').addEventListener('click', () => {
     if (apiKey) {
         let apiKeys = JSON.parse(localStorage.getItem('groq_api_keys')) || [];
         apiKeys.push(apiKey);
+        if (apiKeys.length === 1) {
+            localStorage.setItem('groq_api_key', apiKey);
+        }
         localStorage.setItem('groq_api_keys', JSON.stringify(apiKeys));
         populateApiKeySelect();
         showMessage('API Key saved successfully!', 'is-success');
