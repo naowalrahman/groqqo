@@ -12,12 +12,18 @@ document.getElementById('save-api-key').addEventListener('click', () => {
 });
 
 document.getElementById('delete-api-key').addEventListener('click', () => {
-    const apiKeySelect = document.getElementById('api-key-select');
     const selectedApiKey = apiKeySelect.value;
     if (selectedApiKey) {
         let apiKeys = JSON.parse(localStorage.getItem('groq_api_keys')) || [];
         apiKeys = apiKeys.filter(key => key !== selectedApiKey);
         localStorage.setItem('groq_api_keys', JSON.stringify(apiKeys));
+        
+        // Clear the groq_api_key variable if it matches the selected API key
+        const currentApiKey = localStorage.getItem('groq_api_key');
+        if (currentApiKey === selectedApiKey) {
+            localStorage.removeItem('groq_api_key');
+        }
+
         populateApiKeySelect();
         showMessage('API Key deleted successfully!', 'is-success');
     } else {
@@ -35,6 +41,7 @@ function populateApiKeySelect() {
         option.textContent = key;
         apiKeySelect.appendChild(option);
     });
+
 }
 
 function showMessage(message, type) {
@@ -50,4 +57,22 @@ function showMessage(message, type) {
 // Load the saved API keys on page load
 document.addEventListener('DOMContentLoaded', () => {
     populateApiKeySelect();
+    setApiSelectValue();
+});
+
+function setApiSelectValue() {
+    const selectedApiKey = localStorage.getItem('groq_api_key');
+    if (selectedApiKey) {
+        apiKeySelect.value = selectedApiKey;
+    }
+}
+
+// Set the selected API key as the one to use
+const apiKeySelect = document.getElementById('api-key-select');
+
+setApiSelectValue();
+
+apiKeySelect.addEventListener('change', () => {
+    localStorage.setItem('groq_api_key', apiKeySelect.value);
+    showMessage('API Key selected successfully!', 'is-success');
 });
