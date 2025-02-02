@@ -14,7 +14,10 @@
     <script>
         window.MathJax = {
             tex: {
-                inlineMath: [['$', '$'], ['\\(', '\\)']]
+                inlineMath: [['$', '$'], ['\\(', '\\)'], ['(', ')']],
+                displayMath: { start: '[', end: ']' },
+                processEscapes: true,
+                processEnvironments: true
             }
         };
     </script>
