@@ -1,5 +1,6 @@
 const LARGE_SCREEN_WIDTH = 1024;
 
+let lastRenderedIndex = -1;
 
 var converter = new showdown.Converter();
 converter.setFlavor('github');
@@ -13,10 +14,10 @@ function scrollToBottom() {
 }
 
 // communicate with API with buttons, <ctrl-enter>, and on page load
-(async () => {
-    updateChatHistory(chatHistory);
-    scrollToBottom();
-})();
+// (async () => {
+//     updateChatHistory(chatHistory);
+//     scrollToBottom();
+// })();
 
 document.getElementById('submit').addEventListener('click', async () => {
     await submitQuestion();
@@ -36,7 +37,7 @@ async function submitQuestion() {
     const responseContainer = document.getElementById('response-text');
 
     try {
-        const result = await askGroq(question, model);
+        await askGroq(question, model);
         updateChatHistory(chatHistory);
     } catch (error) {
         responseContainer.innerHTML += `<div class="message has-text-danger">${error.message}</div>`;
@@ -56,25 +57,45 @@ document.getElementById('clear').addEventListener('click', async () => {
 // run every time the chat history is updated
 function updateChatHistory(history) {
     const responseContainer = document.getElementById('response-text');
-    responseContainer.innerHTML = '';
-    history.forEach(entry => {
+    
+    // Only process new messages
+    const newMessages = history.slice(lastRenderedIndex + 1);
+    if (newMessages.length === 0) return;
+
+    // Create fragment for batch DOM updates
+    const fragment = document.createDocumentFragment();
+    
+    newMessages.forEach(entry => {
+        const messageDiv = document.createElement('div');
         const roleClass = entry.role === 'user' ? 'user' : 'assistant';
         const timestamp = new Date(entry.timestamp).toLocaleString();
-        const details = `<div><small>${timestamp}${roleClass === 'assistant' ? ` (${entry.model} @ ${entry.completion_time.toFixed(2)}s)` : ''}</small></div>`; 
-        responseContainer.innerHTML += `<div class="message ${roleClass}">${converter.makeHtml(entry.content)}</div>${details}`;
+        const details = `<div><small>${timestamp}${roleClass === 'assistant' ? ` (${entry.model} @ ${entry.completion_time.toFixed(2)}s, ${entry.response_tokens} tokens @ ${entry.completion_speed.toFixed(1)} t/s)` : ''}</small></div>`; 
+        messageDiv.innerHTML = `<div class="message ${roleClass}">${converter.makeHtml(entry.content)}</div>${details}`;
+        fragment.appendChild(messageDiv);
     });
-    MathJax.typesetPromise([responseContainer]);
-    document.querySelectorAll('pre code').forEach((block) => {
-        if (!block.previousElementSibling || !block.previousElementSibling.classList.contains('code-language-label')) {
-            const language = block.className.split(' ')[0].replace('language-', '') || 'txt';
-            const languageLabel = document.createElement('div');
-            languageLabel.className = 'code-language-label';
-            languageLabel.textContent = language.toUpperCase();
-            block.parentNode.insertBefore(languageLabel, block);
-        }
-        hljs.highlightBlock(block);
-        addLineNumbers(block);
+
+    // Append new content
+    responseContainer.appendChild(fragment);
+    
+    // Only process MathJax and highlighting for new content
+    const newContent = Array.from(responseContainer.children).slice(lastRenderedIndex + 1);
+    MathJax.typesetPromise(newContent);
+    
+    newContent.forEach(element => {
+        element.querySelectorAll('pre code').forEach((block) => {
+            if (!block.previousElementSibling?.classList.contains('code-language-label')) {
+                const language = block.className.split(' ')[0].replace('language-', '') || 'txt';
+                const languageLabel = document.createElement('div');
+                languageLabel.className = 'code-language-label';
+                languageLabel.textContent = language.toUpperCase();
+                block.parentNode.insertBefore(languageLabel, block);
+            }
+            hljs.highlightBlock(block);
+            addLineNumbers(block);
+        });
     });
+
+    lastRenderedIndex = history.length - 1;
 }
 
 // add line numbers to code blocks
@@ -168,3 +189,12 @@ function setupDropdown(dropdownButtonId, dropdownContentId) {
 
 setupDropdown('model-select-button', 'model-select');
 setupDropdown('model-select-side-button', 'model-select-side');
+
+// Modify clearHistory function to reset the index
+function clearHistory() {
+    chatHistory = [];
+    chatHistoryApi = [];
+    lastRenderedIndex = -1;
+    const responseContainer = document.getElementById('response-text');
+    responseContainer.innerHTML = '';
+}
