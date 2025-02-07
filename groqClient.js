@@ -32,7 +32,6 @@ async function askGroq(question, model) {
     const completionSpeed = responseTokens / completionTime;
     chatHistoryApi.push({ role: 'assistant', content: responseContent });
 
-    // Update local chat history
     const assistantMessage = {
         role: 'assistant',
         content: responseContent,
