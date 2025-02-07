@@ -27,7 +27,6 @@ async function askGroq(question, model) {
 
     const responseData = await response.json();
     const responseContent = responseData.choices[0].message.content.replace(/\\/g, '\\\\');
-    console.log(responseContent);
     const completionTime = responseData.usage.completion_time;
     const responseTokens = responseData.usage.completion_tokens;
     const completionSpeed = responseTokens / completionTime;

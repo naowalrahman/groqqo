@@ -12,6 +12,7 @@
     --line-number-text: #000000;
     --dropdown-shadow: rgba(0, 0, 0, 0.2);
     --dropdown-text-color: var(--text-color);
+    --send-icon-color: #3273dc;
 }
 
 :root[data-theme='dark'] {
@@ -26,6 +27,7 @@
     --line-number-text: #ffffff;
     --dropdown-shadow: rgba(255, 255, 255, 0.2);
     --dropdown-text-color: var(--text-color);
+    --send-icon-color: #55a3ff;
 }
 
 html {
@@ -144,6 +146,13 @@ small {
     display: flex;
     align-items: center;
     justify-content: center;
+    background: none;
+    border: none;
+    transition: transform 0.2s ease;
+}
+
+#submit:hover {
+    transform: scale(1.1);
 }
 
 .send-icon, .loading-icon {
@@ -152,6 +161,7 @@ small {
     display: block;
     align-items: center;
     justify-content: center;
+    color: var(--send-icon-color);
 }
 
 .is-hidden {
