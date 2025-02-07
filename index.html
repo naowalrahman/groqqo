@@ -7,15 +7,17 @@
     <title>Groqqo</title>
     <link rel="icon" type="image/png" href="logo.png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.9.3/css/bulma.min.css">
-    <script id="MathJax-script" loading="lazy" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script type="text/javascript" id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script loading="lazy" src="https://cdnjs.cloudflare.com/ajax/libs/showdown/2.1.0/showdown.min.js"></script>
     <link id="highlight-theme" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.1/styles/atom-one-dark.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.1/highlight.min.js"></script>
     <script>
         window.MathJax = {
+            loader: {load: ['[tex]/textmacros']},
             tex: {
-                inlineMath: [['$', '$'], ['\\(', '\\)'], ['(', ')']],
-                displayMath: { start: '[', end: ']' },
+                packages: {'[+]': ['textmacros']},
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']],
                 processEscapes: true,
                 processEnvironments: true
             }
@@ -29,44 +31,59 @@
     <div class="container">
         <div id="response" class="content response-container">
             <div class="header">
-                <h2 id="title" class="is-4">Groqqo</h2>
-                <div class="control is-hidden-touch">
-                    <div class="dropdown">
-                        <button class="dropdown-button" id="model-select-button" data-value="llama-3.3-70b-versatile">Llama 3.3 70B Versatile</button>
-                        <div class="dropdown-content" id="model-select">
-                            <div class="dropdown-item" data-value="deepseek-r1-distill-llama-70b">Deepseek R1 Distill Llama 70B</div>
-                            <div class="dropdown-item" data-value="gemma2-9b-it">Gemma 2 9B IT</div>
-                            <div class="dropdown-item" data-value="llama-3.1-8b-instant">Llama 3.1 8B Instant</div>
-                            <div class="dropdown-item" data-value="llama-3.2-1b-preview">Llama 3.2 1B Preview</div>
-                            <div class="dropdown-item" data-value="llama-3.2-3b-preview">Llama 3.2 3B Preview</div>
-                            <div class="dropdown-item" data-value="llama-3.3-70b-specdec">Llama 3.3 70B SpecDec</div>
-                            <div class="dropdown-item" data-value="llama-3.3-70b-versatile">Llama 3.3 70B Versatile</div>
-                            <div class="dropdown-item" data-value="llama3-8b-8192">Llama 3 8B 8192</div>
-                            <div class="dropdown-item" data-value="llama3-70b-8192">Llama 3 70B 8192</div>
-                            <div class="dropdown-item" data-value="llama-guard-3-8b">Llama Guard 3 8B</div>
-                            <div class="dropdown-item" data-value="mixtral-8x7b-32768">Mixtral 8x7B 32768</div>
+                <div class="header-left">
+                    <h2 id="title" class="is-4">Groqqo</h2>
+                </div>
+                <div class="header-right">
+                    <div class="control is-hidden-touch">
+                        <div class="dropdown">
+                            <button class="dropdown-button" id="model-select-button" data-value="llama-3.3-70b-versatile">Llama 3.3 70B Versatile</button>
+                            <div class="dropdown-content" id="model-select">
+                                <div class="dropdown-item" data-value="deepseek-r1-distill-llama-70b">Deepseek R1 Distill Llama 70B</div>
+                                <div class="dropdown-item" data-value="gemma2-9b-it">Gemma 2 9B IT</div>
+                                <div class="dropdown-item" data-value="llama-3.1-8b-instant">Llama 3.1 8B Instant</div>
+                                <div class="dropdown-item" data-value="llama-3.2-1b-preview">Llama 3.2 1B Preview</div>
+                                <div class="dropdown-item" data-value="llama-3.2-3b-preview">Llama 3.2 3B Preview</div>
+                                <div class="dropdown-item" data-value="llama-3.3-70b-specdec">Llama 3.3 70B SpecDec</div>
+                                <div class="dropdown-item" data-value="llama-3.3-70b-versatile">Llama 3.3 70B Versatile</div>
+                                <div class="dropdown-item" data-value="llama3-8b-8192">Llama 3 8B 8192</div>
+                                <div class="dropdown-item" data-value="llama3-70b-8192">Llama 3 70B 8192</div>
+                                <div class="dropdown-item" data-value="llama-guard-3-8b">Llama Guard 3 8B</div>
+                                <div class="dropdown-item" data-value="mixtral-8x7b-32768">Mixtral 8x7B 32768</div>
+                            </div>
                         </div>
                     </div>
+                    <button id="clear" class="button is-danger is-hidden-touch">Clear Chat</button>
+                    <button class="button is-info is-hidden-touch theme-toggle">Toggle Theme</button>
+                    <button class="button is-info is-hidden-touch api-key" onclick="window.location.href='apikey.html'">Manage API Key</button>
+                    <button class="menu__toggler">
+                        <span></span>
+                    </button>
                 </div>
-                <button class="button is-info is-hidden-touch theme-toggle">Toggle Theme</button>
-                <button class="button is-info is-hidden-touch api-key" onclick="window.location.href='apikey.html'">Manage API Key</button>
-                <button class="menu__toggler">
-                    <span></span>
-                </button>
             </div>
             <div id="response-text"></div>
         </div>
     </div>
     <div class="input-container">
-        <div class="field">
-            <label class="label">Enter your question:</label>
-            <div class="control">
-                <textarea id="question" class="textarea" placeholder="Type your question here..." rows="1"></textarea>
+        <div class="field has-addons">
+            <div class="control is-expanded">
+                <textarea id="question" class="textarea" placeholder="Type your message here..." rows="1"></textarea>
             </div>
-        </div>
-        <div class="buttons">
-            <button id="submit" class="button is-primary">Submit (Ctrl+&#9166;)</button>
-            <button id="clear" class="button is-danger">Clear Chat</button>
+            <div class="control send-button-container">
+                <button id="submit" class="button is-primary">
+                    <span class="icon send-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="21" y1="2" x2="11" y2="13"></line>
+                            <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                        </svg>
+                    </span>
+                    <span class="icon loading-icon is-hidden">
+                        <svg class="spinner" viewBox="0 0 50 50">
+                            <circle class="path" cx="25" cy="25" r="20" fill="none" stroke-width="5"></circle>
+                        </svg>
+                    </span>
+                </button>
+            </div>
         </div>
     </div>
     <div class="menu">
@@ -88,6 +105,7 @@
                     </div>
                 </div>
             </div>
+            <button id="clear-side" class="button is-danger">Clear Chat</button>
             <button class="button is-info theme-toggle">Toggle Theme</button>
             <button class="button is-info api-key" onclick="window.location.href='apikey.html'">Manage API Key</button>
         </div>

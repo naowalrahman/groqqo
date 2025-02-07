@@ -1,4 +1,3 @@
-let chatHistory = [];
 let chatHistoryApi = [];
 
 async function askGroq(question, model) {
@@ -27,14 +26,14 @@ async function askGroq(question, model) {
     }
 
     const responseData = await response.json();
-    const responseContent = responseData.choices[0].message.content;
+    const responseContent = responseData.choices[0].message.content.replace(/\\/g, '\\\\');
+    console.log(responseContent);
     const completionTime = responseData.usage.completion_time;
     const responseTokens = responseData.usage.completion_tokens;
     const completionSpeed = responseTokens / completionTime;
     chatHistoryApi.push({ role: 'assistant', content: responseContent });
 
     // Update local chat history
-    const userMessage = { role: 'user', content: question, timestamp: new Date().toISOString() };
     const assistantMessage = {
         role: 'assistant',
         content: responseContent,
@@ -45,6 +44,5 @@ async function askGroq(question, model) {
         response_tokens: responseTokens
     };
 
-    chatHistory.push(userMessage);
-    chatHistory.push(assistantMessage);
+    return assistantMessage;
 }

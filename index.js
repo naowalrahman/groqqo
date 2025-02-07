@@ -1,6 +1,6 @@
 const LARGE_SCREEN_WIDTH = 1024;
 
-let lastRenderedIndex = -1;
+let chatHistory = [];
 
 var converter = new showdown.Converter();
 converter.setFlavor('github');
@@ -29,21 +29,57 @@ document.getElementById('question').addEventListener('keydown', async (event) =>
     }
 });
 
+document.getElementById('clear-side').addEventListener('click', function() {
+    document.getElementById('response-text').innerHTML = '';
+    localStorage.removeItem('chatHistory');
+});
+
 async function submitQuestion() {
-    const question = document.getElementById('question').value;
-    const model = window.innerWidth > LARGE_SCREEN_WIDTH ? document.getElementById('model-select-button').dataset.value : document.getElementById('model-select-side-button').dataset.value;
+    const questionInput = document.getElementById('question');
+    const question = questionInput.value;
+    const model = window.innerWidth > LARGE_SCREEN_WIDTH ? 
+        document.getElementById('model-select-button').dataset.value : 
+        document.getElementById('model-select-side-button').dataset.value;
+    
     if (!question) return;
 
-    const responseContainer = document.getElementById('response-text');
+    // Clear input immediately
+    questionInput.value = '';
+    
+    // Add user message to chat immediately
+    const userMessage = {
+        role: 'user',
+        content: question,
+        timestamp: new Date().toISOString()
+    };
+    chatHistory.push(userMessage);
+    updateChatHistory(userMessage);
+
+    // Show loading state
+    const submitButton = document.getElementById('submit');
+    const sendIcon = submitButton.querySelector('.send-icon');
+    const loadingIcon = submitButton.querySelector('.loading-icon');
+    sendIcon.classList.add('is-hidden');
+    loadingIcon.classList.remove('is-hidden');
 
     try {
-        await askGroq(question, model);
-        updateChatHistory(chatHistory);
+        const assistantMessage = await askGroq(question, model);
+        chatHistory.push(assistantMessage);
+        updateChatHistory(assistantMessage);
     } catch (error) {
-        responseContainer.innerHTML += `<div class="message has-text-danger">${error.message}</div>`;
+        const errorMessage = {
+            role: 'assistant',
+            content: error.message,
+            timestamp: new Date().toISOString()
+        };
+        chatHistory.push(errorMessage);
+        updateChatHistory(errorMessage);
+    } finally {
+        // Restore send icon
+        sendIcon.classList.remove('is-hidden');
+        loadingIcon.classList.add('is-hidden');
     }
 
-    document.getElementById('question').value = '';
     scrollToBottom();
 }
 
@@ -54,48 +90,67 @@ document.getElementById('clear').addEventListener('click', async () => {
     responseContainer.innerHTML = '';
 });
 
-// run every time the chat history is updated
-function updateChatHistory(history) {
+// run every time there's a new message
+function updateChatHistory(message) {
     const responseContainer = document.getElementById('response-text');
     
-    // Only process new messages
-    const newMessages = history.slice(lastRenderedIndex + 1);
-    if (newMessages.length === 0) return;
+    const messageDiv = document.createElement('div');
+    const roleClass = message.role === 'user' ? 'user' : 'assistant';
+    const timestamp = new Date(message.timestamp).toLocaleString();
 
-    // Create fragment for batch DOM updates
-    const fragment = document.createDocumentFragment();
-    
-    newMessages.forEach(entry => {
-        const messageDiv = document.createElement('div');
-        const roleClass = entry.role === 'user' ? 'user' : 'assistant';
-        const timestamp = new Date(entry.timestamp).toLocaleString();
-        const details = `<div><small>${timestamp}${roleClass === 'assistant' ? ` (${entry.model} @ ${entry.completion_time.toFixed(2)}s, ${entry.response_tokens} tokens @ ${entry.completion_speed.toFixed(1)} t/s)` : ''}</small></div>`; 
-        messageDiv.innerHTML = `<div class="message ${roleClass}">${converter.makeHtml(entry.content)}</div>${details}`;
-        fragment.appendChild(messageDiv);
-    });
-
-    // Append new content
-    responseContainer.appendChild(fragment);
-    
-    // Only process MathJax and highlighting for new content
-    const newContent = Array.from(responseContainer.children).slice(lastRenderedIndex + 1);
-    MathJax.typesetPromise(newContent);
-    
-    newContent.forEach(element => {
-        element.querySelectorAll('pre code').forEach((block) => {
-            if (!block.previousElementSibling?.classList.contains('code-language-label')) {
-                const language = block.className.split(' ')[0].replace('language-', '') || 'txt';
-                const languageLabel = document.createElement('div');
-                languageLabel.className = 'code-language-label';
-                languageLabel.textContent = language.toUpperCase();
-                block.parentNode.insertBefore(languageLabel, block);
+    // Process content to handle <think> tags
+    let content = message.content;
+    if (roleClass === 'assistant') {
+        // Split content into regular text and thinking sections
+        let parts = content.split(/<think>|<\/think>/);
+        let processedContent = '';
+        
+        // Process each part alternately (odd indices are thinking sections)
+        parts.forEach((part, index) => {
+            if (index % 2 === 0) {
+                // Regular content
+                if (part.trim()) {
+                    processedContent += converter.makeHtml(part);
+                }
+            } else {
+                // Thinking content
+                const randomId = Math.random().toString(36).substring(2, 15);
+                processedContent += `
+                <div class="thinking-container">
+                    <div class="thinking-header" onclick="toggleThinking('${randomId}')">
+                        <span class="thinking-icon">💭</span>
+                        <span class="thinking-title">Show reasoning</span>
+                        <span class="thinking-arrow">▼</span>
+                    </div>
+                    <div id="${randomId}" class="thinking-block collapsed">
+                        ${converter.makeHtml(part)}
+                    </div>
+                </div>`;
             }
-            hljs.highlightBlock(block);
-            addLineNumbers(block);
         });
+        content = processedContent;
+    }
+    
+    const details = `<div><small>${timestamp}${roleClass === 'assistant' ? ` (${message.model} @ ${message.completion_time.toFixed(2)}s, ${message.response_tokens} tokens @ ${message.completion_speed.toFixed(1)} t/s)` : ''}</small></div>`; 
+    messageDiv.innerHTML = `<div class="message ${roleClass}">${content}</div>${details}`;
+    
+    // Append new content
+    responseContainer.appendChild(messageDiv);
+    
+    // Process MathJax and highlighting for new content
+    MathJax.typesetPromise([messageDiv]);
+    
+    messageDiv.querySelectorAll('pre code').forEach((block) => {
+        if (!block.previousElementSibling?.classList.contains('code-language-label')) {
+            const language = block.className.split(' ')[0].replace('language-', '') || 'txt';
+            const languageLabel = document.createElement('div');
+            languageLabel.className = 'code-language-label';
+            languageLabel.textContent = language.toUpperCase();
+            block.parentNode.insertBefore(languageLabel, block);
+        }
+        hljs.highlightBlock(block);
+        addLineNumbers(block);
     });
-
-    lastRenderedIndex = history.length - 1;
 }
 
 // add line numbers to code blocks
@@ -194,7 +249,18 @@ setupDropdown('model-select-side-button', 'model-select-side');
 function clearHistory() {
     chatHistory = [];
     chatHistoryApi = [];
-    lastRenderedIndex = -1;
     const responseContainer = document.getElementById('response-text');
     responseContainer.innerHTML = '';
+}
+
+// Add this function at the end of the file
+function toggleThinking(id) {
+    const block = document.getElementById(id);
+    const header = block.previousElementSibling;
+    const title = header.querySelector('.thinking-title');
+    const arrow = header.querySelector('.thinking-arrow');
+    
+    block.classList.toggle('collapsed');
+    title.textContent = block.classList.contains('collapsed') ? 'Show reasoning' : 'Hide reasoning';
+    arrow.style.transform = block.classList.contains('collapsed') ? 'rotate(0deg)' : 'rotate(180deg)';
 }
