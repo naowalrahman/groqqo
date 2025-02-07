@@ -1,0 +1,60 @@
+.thinking-container {
+    margin: 1em 0;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.thinking-header {
+    background-color: var(--user-message-bg);
+    padding: 0.75em 1em;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.5em;
+    user-select: none;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.thinking-header:hover {
+    background-color: var(--hover-bg);
+}
+
+.thinking-icon {
+    font-size: 1.2em;
+}
+
+.thinking-title {
+    flex-grow: 1;
+    font-weight: 500;
+}
+
+.thinking-arrow {
+    transition: transform 0.3s ease;
+}
+
+.thinking-arrow.collapsed {
+    transform: rotate(-90deg);
+}
+
+.thinking-block {
+    background-color: var(--bg-color);
+    padding: 1em;
+    border-left: 4px solid #3273dc;
+    overflow: hidden;
+    font-size: 0.9em;
+    transition: all 0.3s ease;
+    height: auto;
+    opacity: 1;
+    transform-origin: top;
+    transform: scaleY(1);
+}
+
+.thinking-block.collapsed {
+    height: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+    opacity: 0;
+    transform: scaleY(0);
+    border-left-color: transparent;
+}
