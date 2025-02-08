@@ -64,6 +64,7 @@
             <div id="response-text"></div>
         </div>
     </div>
+
     <div class="input-container">
         <div class="field has-addons">
             <div class="control is-expanded">
@@ -86,12 +87,14 @@
             </div>
         </div>
     </div>
+
     <div class="menu">
         <div class="side-menu-content">
             <div class="control">
                 <div class="dropdown">
                     <button class="dropdown-button" id="model-select-side-button" data-value="llama-3.3-70b-versatile">Llama 3.3 70B Versatile</button>
                     <div class="dropdown-content" id="model-select-side">
+                        <div class="dropdown-item" data-value="deepseek-r1-distill-llama-70b">Deepseek R1 Distill Llama 70B</div>
                         <div class="dropdown-item" data-value="gemma2-9b-it">Gemma 2 9B IT</div>
                         <div class="dropdown-item" data-value="llama-3.1-8b-instant">Llama 3.1 8B Instant</div>
                         <div class="dropdown-item" data-value="llama-3.2-1b-preview">Llama 3.2 1B Preview</div>
@@ -110,6 +113,7 @@
             <button class="button is-info api-key" onclick="window.location.href='apikey.html'">Manage API Key</button>
         </div>
     </div>
+
     <script src="index.js"></script>
 </body>
 
